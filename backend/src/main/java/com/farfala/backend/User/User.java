@@ -37,8 +37,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     String lastname;
     String firstname;
-    String country;
+    String email;
     String password;
+    String phonenumber;
     @Enumerated(EnumType.STRING) 
     Role role;
 

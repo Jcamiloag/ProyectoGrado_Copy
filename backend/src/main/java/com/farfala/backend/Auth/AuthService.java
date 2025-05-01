@@ -39,7 +39,8 @@ public class AuthService { //Clase que representa el servicio de autenticación
             .password(passwordEncoder.encode( request.getPassword()))
             .firstname(request.getFirstname())
             .lastname(request.lastname)
-            .country(request.getCountry())
+            .email(request.getEmail())
+            .phonenumber(request.getPhonenumber())
             .role(Role.USER)
             .build();
 
