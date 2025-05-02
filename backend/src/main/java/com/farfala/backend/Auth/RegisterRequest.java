@@ -1,5 +1,7 @@
 package com.farfala.backend.Auth;
 
+import com.farfala.backend.User.Role;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +19,5 @@ public class RegisterRequest {
     String lastname;
     String email; 
     String phonenumber;
+    Role role;
 }

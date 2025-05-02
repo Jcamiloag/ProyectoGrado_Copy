@@ -34,6 +34,12 @@ public class AuthService { //Clase que representa el servicio de autenticación
     }
 
     public AuthResponse register(RegisterRequest request) {
+        Role userRole = Role.USER;
+
+        if ((request.getRole()) == Role.ADMIN) {
+            userRole = Role.ADMIN;
+        }
+        
         User user = User.builder()
             .username(request.getUsername())
             .password(passwordEncoder.encode( request.getPassword()))
@@ -41,7 +47,7 @@ public class AuthService { //Clase que representa el servicio de autenticación
             .lastname(request.lastname)
             .email(request.getEmail())
             .phonenumber(request.getPhonenumber())
-            .role(Role.USER)
+            .role(userRole)
             .build();
 
         userRepository.save(user);
