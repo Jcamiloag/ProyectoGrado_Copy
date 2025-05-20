@@ -34,6 +34,17 @@ public class AuthService { //Clase que representa el servicio de autenticación
     }
 
     public AuthResponse register(RegisterRequest request) {
+        // Validación de campos requeridos
+        if (request.getLastname() == null || request.getLastname().trim().isEmpty()) {
+            throw new IllegalArgumentException("Lastname is required");
+        }
+        if (request.getUsername() == null || request.getUsername().trim().isEmpty()) {
+            throw new IllegalArgumentException("Username is required");
+        }
+        if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException("Password is required");
+        }
+        
         Role userRole = Role.USER;
 
         if ((request.getRole()) == Role.ADMIN) {
@@ -44,7 +55,7 @@ public class AuthService { //Clase que representa el servicio de autenticación
             .username(request.getUsername())
             .password(passwordEncoder.encode( request.getPassword()))
             .firstname(request.getFirstname())
-            .lastname(request.lastname)
+            .lastname(request.getLastname())
             .email(request.getEmail())
             .phonenumber(request.getPhonenumber())
             .role(userRole)
