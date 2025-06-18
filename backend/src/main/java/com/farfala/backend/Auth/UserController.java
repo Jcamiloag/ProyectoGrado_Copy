@@ -19,8 +19,8 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String token) {
         String jwt = token.replace("Bearer ", "");
-        String username = jwtService.getUsernameFromToken(jwt);
-        User user = userRepository.findByUsername(username).orElseThrow();
+        String email = jwtService.getUsernameFromToken(jwt); // El token contiene el email
+        User user = userRepository.findByEmail(email).orElseThrow();
         return ResponseEntity.ok(user);
     }
 
@@ -30,8 +30,8 @@ public class UserController {
             @RequestBody User updatedUser) {
 
         String jwt = token.replace("Bearer ", "");
-        String username = jwtService.getUsernameFromToken(jwt);
-        User user = userRepository.findByUsername(username).orElseThrow();
+        String email = jwtService.getUsernameFromToken(jwt); // El token contiene el email
+        User user = userRepository.findByEmail(email).orElseThrow();
 
         user.setFirstname(updatedUser.getFirstname());
         user.setLastname(updatedUser.getLastname());

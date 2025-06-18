@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor; //Importa la clase NoArgsConstructor de lombok 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthResponse { //Clase que representa la respuesta de autenticación
-    String token;  //Token de autenticación
+public class AuthResponse {
+    private String token;
+    private String username; 
+    private String role;
 }

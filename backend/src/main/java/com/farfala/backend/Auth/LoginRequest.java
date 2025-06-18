@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor; // Importa la anotación NoArgsConstructor para
 @AllArgsConstructor // Esta anotación genera un constructor con todos los campos de la clase como parámetros
 @NoArgsConstructor // Esta anotación genera un constructor sin argumentos para la clase, permitiendo crear instancias de la clase sin necesidad de proporcionar valores para los campos
 public class LoginRequest { // Clase que representa una solicitud de inicio de sesión
-    String username;
+    String email;
     String password; 
 }

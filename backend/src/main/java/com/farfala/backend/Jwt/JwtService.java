@@ -10,29 +10,44 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.farfala.backend.User.User;
+import com.farfala.backend.User.UserRepository;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
     @Value("${jwt.secret}")
     private String secretKey;
 
+    private final UserRepository userRepository;
+
     public String getToken(UserDetails user) {
-        return getToken(new HashMap<>(), user);
+        User currentUser = userRepository.findByEmail(user.getUsername())
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado con email: " + user.getUsername()));
+
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("role", currentUser.getRole().name());
+        extraClaims.put("id", currentUser.getId());
+        extraClaims.put("username", currentUser.getUsername()); // ✅ Añadimos el username
+
+        return generateToken(extraClaims, user);
     }
 
-    private String getToken(Map<String,Object> extraClaims, UserDetails user) {
+    private String generateToken(Map<String, Object> extraClaims, UserDetails user) {
         return Jwts
             .builder()
             .setClaims(extraClaims)
-            .setSubject(user.getUsername())
+            .setSubject(user.getUsername()) // Aquí el username representa el email
             .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis()+1000*60*24)) // 24 mins
+            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 horas
             .signWith(getKey(), SignatureAlgorithm.HS256)
             .compact();
     }

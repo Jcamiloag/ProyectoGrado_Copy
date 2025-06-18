@@ -17,35 +17,36 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
-public class ApplicationConfig { //Clase de configuración de la aplicación
+public class ApplicationConfig {
 
-    private final UserRepository userRepository; //Inyeccion de dependencias del repositorio de usuarios
+    private final UserRepository userRepository;
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception //Metodo que devuelve el administrador de autenticación
-    {
-        return config.getAuthenticationManager(); //Devuelve el administrador de autenticación
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() //Metodo que devuelve el proveedor de autenticación
-    {
-        DaoAuthenticationProvider authenticationProvider= new DaoAuthenticationProvider(); //Crea un nuevo proveedor de autenticación
-        authenticationProvider.setUserDetailsService(userDetailService()); //Establece el servicio de detalles del usuario
-        authenticationProvider.setPasswordEncoder(passwordEncoder()); //Establece el codificador de contraseñas
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailService());
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
 
-    @Bean //Metodo que devuelve el codificador de contraseñas
-    public PasswordEncoder passwordEncoder() { //Metodo que devuelve el codificador de contraseñas
-        return new BCryptPasswordEncoder(); //Devuelve un nuevo codificador de contraseñas
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public UserDetailsService userDetailService() { //Metodo que devuelve el servicio de detalles del usuario
-        return username -> userRepository.findByUsername(username) //Busca el usuario por su nombre de usuario
-            .map(user -> new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.getAuthorities())) //Crea un nuevo usuario de Spring Security
-        .orElseThrow(()-> new UsernameNotFoundException("User not found")); //Lanza una excepción si no se encuentra el usuario
+    public UserDetailsService userDetailService() {
+        return email -> userRepository.findByEmail(email)
+            .map(user -> new org.springframework.security.core.userdetails.User(
+                user.getEmail(), // Usar email como identificador
+                user.getPassword(),
+                user.getAuthorities()
+            ))
+            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el correo: " + email));
     }
-
 }
