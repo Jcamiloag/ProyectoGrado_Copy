@@ -29,6 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
        
+                
         final String token = getTokenFromRequest(request);
         final String username;
 
@@ -39,10 +40,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         username=jwtService.getUsernameFromToken(token);
+        System.out.println("Token recibido: " + token);
+        System.out.println("Username del token: " + username);
 
         if (username!=null && SecurityContextHolder.getContext().getAuthentication()==null)
         {
             UserDetails userDetails=userDetailsService.loadUserByUsername(username);
+            System.out.println("🔎 Comparando username del token: " + username);
+            System.out.println("🔎 Username desde userDetails: " + userDetails.getUsername());
 
             if (jwtService.isTokenValid(token, userDetails))
             {

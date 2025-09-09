@@ -32,7 +32,8 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authRequest ->
                 authRequest
-                    .requestMatchers("/", "/auth/**", "/api/clases/**", "api/reservas/**").permitAll()
+                    .requestMatchers("/", "/auth/**", "/api/clases/**").permitAll()
+                    .requestMatchers("/api/reservas/**").authenticated()
                     .requestMatchers("/v1/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 
                     .anyRequest().authenticated()
@@ -47,7 +48,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setExposedHeaders(Arrays.asList("*"));
@@ -56,3 +57,5 @@ public class SecurityConfig {
         return source;
     }
 }
+
+

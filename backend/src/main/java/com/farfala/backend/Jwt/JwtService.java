@@ -36,7 +36,7 @@ public class JwtService {
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("role", currentUser.getRole().name());
         extraClaims.put("id", currentUser.getId());
-        extraClaims.put("username", currentUser.getUsername()); // ✅ Añadimos el username
+        extraClaims.put("username", currentUser.getUsername()); 
 
         return generateToken(extraClaims, user);
     }
@@ -45,9 +45,9 @@ public class JwtService {
         return Jwts
             .builder()
             .setClaims(extraClaims)
-            .setSubject(user.getUsername()) // Aquí el username representa el email
+            .setSubject(user.getUsername()) 
             .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 horas
+            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) 
             .signWith(getKey(), SignatureAlgorithm.HS256)
             .compact();
     }
@@ -59,6 +59,19 @@ public class JwtService {
 
     public String getUsernameFromToken(String token) {
         return getClaim(token, Claims::getSubject);
+    }
+
+    public Integer getUserIdFromToken(String token) {
+        Claims claims = getAllClaims(token);
+        Object idClaim = claims.get("id");
+        
+        if (idClaim instanceof Integer) {
+            return (Integer) idClaim;
+        } else if (idClaim instanceof Number) {
+            return ((Number) idClaim).intValue();
+        } else {
+            throw new RuntimeException("ID no encontrado o en formato incorrecto en el token");
+        }
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
@@ -88,3 +101,11 @@ public class JwtService {
         return getExpiration(token).before(new Date());
     }
 }
+
+
+
+
+
+
+
+

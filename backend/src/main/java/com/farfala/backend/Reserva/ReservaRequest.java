@@ -1,4 +1,5 @@
-package com.farfala.backend.Auth.Reserva;
+
+package com.farfala.backend.Reserva;
 
 public class ReservaRequest {
     private Long usuarioId;
@@ -36,6 +37,4 @@ public class ReservaRequest {
         this.hora = hora;
     }
 
-  
 }
-
