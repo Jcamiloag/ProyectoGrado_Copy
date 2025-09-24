@@ -1,11 +1,16 @@
 
 package com.farfala.backend.Reserva;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 public class ReservaRequest {
     private Long usuarioId;
     private Long claseId;
-    private String fecha;
-    private String hora;
+    private Long horarioId;
+    private LocalDate fecha;
+    private LocalTime hora;
+   
 
     public ReservaRequest() {
     }
@@ -24,17 +29,25 @@ public class ReservaRequest {
     public void setClaseId(Long claseId) {
         this.claseId = claseId;
     }
-    public String getFecha() {
-        return fecha;
+
+    public Long getHorarioId() {
+        return horarioId;
     }
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
-    public String getHora() {
-        return hora;
-    }
-    public void setHora(String hora) {
-        this.hora = hora;
+    public void setHorarioId(Long horarioId) {
+        this.horarioId = horarioId;
     }
 
+    public LocalTime getHora() {
+        return hora;
+    }
+    public void setHora(LocalTime hora) {
+        this.hora = hora;
+    }
+    
+    public LocalDate getFecha() {
+        return fecha;
+    }
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
 }

@@ -16,8 +16,8 @@ public class ClaseController {
 
     @Autowired
     public ClaseController(ClaseService claseService,
-                           HorarioClaseRepository horarioClaseRepository,
-                           ClaseRepository claseRepository) {
+            HorarioClaseRepository horarioClaseRepository,
+            ClaseRepository claseRepository) {
         this.claseService = claseService;
         this.horarioClaseRepository = horarioClaseRepository;
         this.claseRepository = claseRepository;
@@ -49,14 +49,28 @@ public class ClaseController {
     }
 
     @PostMapping("/{id}/horarios")
-    public ResponseEntity<?> agregarHorario(@PathVariable Long id, @RequestBody HorarioRequest request) {
-        Clase clase = claseRepository.findById(id).orElseThrow(() -> new RuntimeException("Clase no encontrada"));
+public ResponseEntity<?> agregarHorario(@PathVariable Long id, @RequestBody HorarioRequest request) {
+    try {
+        Clase clase = claseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Clase no encontrada"));
+
+        if (request.getFecha() == null || request.getHora() == null ||
+            request.getFecha().isBlank() || request.getHora().isBlank()) {
+            return ResponseEntity.badRequest().body("La fecha y hora son obligatorias");
+        }
 
         HorarioClase horario = new HorarioClase(request.getFecha(), request.getHora(), clase);
-        horarioClaseRepository.save(horario);
+        HorarioClase guardado = horarioClaseRepository.save(horario);
 
-        return ResponseEntity.ok("Horario agregado con éxito");
+        // Devolver 201 Created con el objeto guardado (id incluido)
+        return ResponseEntity.status(201).body(guardado);
+    } catch (Exception ex) {
+        // Loguea el error en consola para poder ver stack trace en logs
+        ex.printStackTrace();
+        // Devuelve mensaje claro al frontend para debug
+        return ResponseEntity.status(500).body("Error al guardar horario: " + ex.getMessage());
     }
+}
 
     @GetMapping("/{id}/horarios")
     public ResponseEntity<List<HorarioClase>> obtenerHorarios(@PathVariable Long id) {

@@ -1,8 +1,10 @@
-
-// ✅ Clase ENTIDAD Reserva completa y lista
 package com.farfala.backend.Reserva;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 import com.farfala.backend.Clase.Clase;
+import com.farfala.backend.Clase.HorarioClase;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,15 +24,27 @@ public class Reserva {
     @JoinColumn(name = "clase_id", nullable = false)
     private Clase clase;
 
-    private String fecha;
+    private LocalDate fecha;
 
-    private String hora;
+    private LocalTime hora;
 
+<<<<<<< HEAD
     // ✅ Constructor personalizado SIN el id, para crear la reserva desde el controlador
     public Reserva(Long usuarioId, Clase clase, String fecha, String hora) {
+=======
+    // Agregamos la relación bien definida
+    @ManyToOne
+    @JoinColumn(name = "horario_id", nullable = false)
+    private HorarioClase horarioClase;
+
+    // ✅ Constructor personalizado SIN el id
+    public Reserva(Long usuarioId, Clase clase, LocalDate fecha, LocalTime hora, HorarioClase horarioClase) {
+>>>>>>> feature/reservas
         this.usuarioId = usuarioId;
         this.clase = clase;
         this.fecha = fecha;
         this.hora = hora;
+        this.horarioClase = horarioClase;
     }
+
 }
