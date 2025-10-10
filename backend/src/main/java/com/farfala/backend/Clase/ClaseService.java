@@ -29,16 +29,21 @@ public class ClaseService {
 
     public Clase actualizarClase(Long id, Clase nuevaClase) {
         Clase existente = claseRepository.findById(id).orElse(null);
-        if (existente == null) return null;
+        if (existente == null) {
+            return null;
+        }
 
-        existente.setNombre(nuevaClase.getNombre());
-        existente.setDescripcion(nuevaClase.getDescripcion());
-        existente.setCategoria(nuevaClase.getCategoria());
+        if (nuevaClase.getNombre() != null)
+            existente.setNombre(nuevaClase.getNombre());
+        if (nuevaClase.getDescripcion() != null)
+            existente.setDescripcion(nuevaClase.getDescripcion());
+        if (nuevaClase.getCategoria() != null)
+            existente.setCategoria(nuevaClase.getCategoria());
         existente.setActiva(nuevaClase.isActiva());
 
-        // Actualizar horarios
-        existente.getHorarios().clear();
-        if (nuevaClase.getHorarios() != null) {
+        // Actualizar horarios si vienen
+        if (nuevaClase.getHorarios() != null && !nuevaClase.getHorarios().isEmpty()) {
+            existente.getHorarios().clear();
             nuevaClase.getHorarios().forEach(h -> h.setClase(existente));
             existente.getHorarios().addAll(nuevaClase.getHorarios());
         }

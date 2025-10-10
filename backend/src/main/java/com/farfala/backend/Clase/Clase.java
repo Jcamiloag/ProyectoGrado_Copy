@@ -1,9 +1,12 @@
 package com.farfala.backend.Clase;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
+@Table(name = "clase")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Clase {
 
     @Id
@@ -16,9 +19,9 @@ public class Clase {
     private boolean activa;
 
     @OneToMany(mappedBy = "clase", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("clase")
     private List<HorarioClase> horarios;
 
-    // Constructores
     public Clase() {}
 
     public Clase(String nombre, String descripcion, String categoria, boolean activa) {
@@ -27,8 +30,6 @@ public class Clase {
         this.categoria = categoria;
         this.activa = activa;
     }
-
-    // Getters y Setters
 
     public Long getId() {
         return id;
