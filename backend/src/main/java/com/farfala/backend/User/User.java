@@ -7,74 +7,163 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.farfala.backend.Plan.Plan;
+
 import jakarta.persistence.*;
 import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})}) // Aseguramos que el email sea único
+@Table(
+    name = "user",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"email"})
+    }
+)
+@JsonIgnoreProperties({
+    "authorities",
+    "password",
+    "accountNonExpired",
+    "accountNonLocked",
+    "credentialsNonExpired",
+    "enabled"
+})
 public class User implements UserDetails {
 
-    @Id
-    @GeneratedValue
-    private Integer id;
 
-    @Basic
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+
+
     @Column(nullable = false)
-    private String username; // Este es solo un "nombre de pantalla", no se usa para login
+    private String username;
+
+
 
     @Column(nullable = false)
     private String lastname;
 
+
+
     private String firstname;
+
+
 
     @Column(nullable = false, unique = true)
     private String email;
 
+
+
     @Column(nullable = false)
     private String password;
 
+
+
     private String phonenumber;
+
+
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
+
+
+
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+
+        return List.of(
+                new SimpleGrantedAuthority(role.name())
+        );
+
     }
+
+
+
 
     @Override
+    @JsonIgnore
     public String getPassword() {
+
         return password;
+
     }
 
-    // ✅ Ahora usamos el email como identificador de login
+
+
+
     @Override
     public String getUsername() {
+
         return email;
+
     }
 
+
+
+
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
-       return true;
+
+        return true;
+
     }
 
+
+
+
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
-       return true;
+
+        return true;
+
     }
 
+
+
+
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
+
         return true;
+
     }
 
+
+
+
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
+
         return true;
+
     }
+
+
+
+
+
+    @JsonIgnore
+    @ToString.Exclude
+    @OneToMany(
+        mappedBy = "user",
+        cascade = CascadeType.ALL,
+        fetch = FetchType.LAZY
+    )
+    private List<Plan> plans;
+
+
 }

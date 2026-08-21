@@ -30,26 +30,31 @@ public class JwtService {
     private final UserRepository userRepository;
 
     public String getToken(UserDetails user) {
+
         User currentUser = userRepository.findByEmail(user.getUsername())
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado con email: " + user.getUsername()));
+                .orElseThrow(() -> new RuntimeException(
+                        "Usuario no encontrado con email: " + user.getUsername()));
 
         Map<String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("role", currentUser.getRole().name());
+
         extraClaims.put("id", currentUser.getId());
-        extraClaims.put("username", currentUser.getUsername()); // ✅ Añadimos el username
+        extraClaims.put("firstname", currentUser.getFirstname());
+        extraClaims.put("lastname", currentUser.getLastname());
+        extraClaims.put("email", currentUser.getEmail());
+        extraClaims.put("phonenumber", currentUser.getPhonenumber());
+        extraClaims.put("role", currentUser.getRole().name());
 
         return generateToken(extraClaims, user);
     }
 
     private String generateToken(Map<String, Object> extraClaims, UserDetails user) {
-        return Jwts
-            .builder()
-            .setClaims(extraClaims)
-            .setSubject(user.getUsername()) // Aquí el username representa el email
-            .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 horas
-            .signWith(getKey(), SignatureAlgorithm.HS256)
-            .compact();
+        return Jwts.builder()
+                .setClaims(extraClaims)
+                .setSubject(user.getUsername()) // El subject sigue siendo el email
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 horas
+                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
     private Key getKey() {
@@ -63,16 +68,15 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
     private Claims getAllClaims(String token) {
-        return Jwts
-            .parserBuilder()
-            .setSigningKey(getKey())
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
+        return Jwts.parserBuilder()
+                .setSigningKey(getKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public <T> T getClaim(String token, Function<Claims, T> claimsResolver) {

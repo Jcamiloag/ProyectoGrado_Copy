@@ -1,17 +1,29 @@
 package com.farfala.backend.Auth;
 
-
-import lombok.AllArgsConstructor; //Importa todas las clases de lombok necesarias para la creación de la clase AuthResponse
-import lombok.Builder; //Importa la clase Builder de lombok para la creación de objetos de la clase AuthResponse
-import lombok.Data; //Importa la clase Data de lombok para la creación de la clase AuthResponse
-import lombok.NoArgsConstructor; //Importa la clase NoArgsConstructor de lombok para la creación de la clase AuthResponse
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthResponse {
+
     private String token;
-    private String username; 
+
+    private Long id;
+
+    private String username;
+
+    private String firstname;
+
+    private String lastname;
+
+    private String email;
+
+    private String phonenumber;
+
     private String role;
 }

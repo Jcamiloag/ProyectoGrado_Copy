@@ -11,47 +11,144 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 import java.util.Arrays;
 
 import com.farfala.backend.Jwt.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     private final AuthenticationProvider authProvider;
 
+
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http
+    ) throws Exception {
+
+
         return http
+
             .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .authorizeHttpRequests(authRequest ->
-                authRequest
-                    .requestMatchers("/", "/auth/**", "/api/clases/**").permitAll()
-                    .requestMatchers("/v1/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                    .anyRequest().authenticated()
+
+            .cors(cors -> 
+                cors.configurationSource(
+                    corsConfigurationSource()
+                )
             )
+
+
+            .authorizeHttpRequests(authRequest ->
+
+                authRequest
+
+                    .requestMatchers(
+                        "/",
+                        "/auth/**",
+                        "/api/clases/**",
+                        "/evaluaciones/**"
+                    )
+                    .permitAll()
+
+
+                    .requestMatchers(
+                        "/v1/api-docs/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html"
+                    )
+                    .permitAll()
+
+
+                    .anyRequest()
+                    .permitAll()
+
+            )
+
+
             .sessionManagement(sessionManager ->
-                sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                sessionManager
+
+                    .sessionCreationPolicy(
+                        SessionCreationPolicy.STATELESS
+                    )
+
+            )
+
+
             .authenticationProvider(authProvider)
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+
+
+            .addFilterBefore(
+                jwtAuthenticationFilter,
+                UsernamePasswordAuthenticationFilter.class
+            )
+
+
             .build();
+
     }
+
+
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setExposedHeaders(Arrays.asList("*"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+
+
+        CorsConfiguration configuration =
+                new CorsConfiguration();
+
+
+        configuration.setAllowedOrigins(
+            Arrays.asList("*")
+        );
+
+
+        configuration.setAllowedMethods(
+            Arrays.asList(
+                "GET",
+                "POST",
+                "PUT",
+                "PATCH",
+                "DELETE",
+                "OPTIONS"
+            )
+        );
+
+
+        configuration.setAllowedHeaders(
+            Arrays.asList("*")
+        );
+
+
+        configuration.setExposedHeaders(
+            Arrays.asList("*")
+        );
+
+
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+
+
+        source.registerCorsConfiguration(
+            "/**",
+            configuration
+        );
+
+
         return source;
+
     }
+
 }
